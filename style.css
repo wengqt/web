@@ -1,0 +1,71 @@
+ul{
+    list-style: none;
+    width: 100%;
+
+}
+ul li{
+    display: inline-block;
+}
+
+
+.songname{
+    font-size: 2em;
+    height: 50px;
+    width: 40%;
+}
+.singername{
+    font-size: 2em;
+    height: 50px;
+    width: 20%;
+}
+.songtime{
+    font-size: 2em;
+    height: 50px;
+    width: 20%;
+}
+.songlist{
+    /*display: inline-block;*/
+    height: 400px;
+    overflow: hidden;
+}
+
+.song_details{
+    display: inline-block;
+    float: right;
+    width: 35%;
+    height: 500px;
+
+}
+#stopBtn{
+    display:none;
+}
+
+.voiceController{
+    display: inline-block;
+    position: relative;
+    width: 200px;
+    height: 20px;
+    overflow: hidden;
+}
+.bar{
+    display: inline-block;
+    z-index: -1111;
+    position: absolute;
+    top:7.5px;
+    width: 200px;
+    height: 5px;
+    background-color: grey;
+}
+#ball{
+    position: absolute;
+    z-index: 1;
+    height: 20px;
+    width: 20px;
+    border-radius: 15px 15px 15px 15px ;
+    background-color: yellow;
+    left:20px;
+}
+
+#voice{
+    display: inline-block;
+}
