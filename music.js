@@ -9,6 +9,7 @@ var voiceRate=0.1;
 var musicNumber;
 
 
+
 function music(songname,singer,time,i){
     this.songname=songname;
     this.singer=singer;
@@ -23,7 +24,7 @@ function music(songname,singer,time,i){
         $(".songlist").append(ul);
         $(ul).append(aa);
         $(aa).append(li);
-}
+};
 
     this.chooseMusic=function () {
          a =songname;
@@ -37,7 +38,7 @@ function music(songname,singer,time,i){
         $('#playBtn').hide();
     });
         // alert(songname+b );
-    }
+    };
     this.play =function (){
         a =songname;
         b =singer;
@@ -95,9 +96,20 @@ function musicplay(){
                 scriptNode.onaudioprocess = function(audioProcessingEvent) {
 
 
-                    time = audioProcessingEvent.playbackTime;
-                    // console.log(time);
 
+                            time =stopTime +audioProcessingEvent.playbackTime;
+
+
+
+
+                        // console.log(audioProcessingEvent.playbackTime);
+
+                        if(time == source.buffer.duration||time >source.buffer.duration){
+                            nextMusic();
+                            console.log(source.buffer.duration);
+                        }
+                        showTime();
+                    processrange();
                     // The input buffer is the song we loaded earlier
                     var inputBuffer = audioProcessingEvent.inputBuffer;
 
@@ -130,8 +142,12 @@ function musicplay(){
                 // console.log(when);
                 // console.log(time);
                 //指定位置开始播放
-                source.start(0);
+
+
+                source.start(0,stopTime%buffer.duration);
                 console.info(source);
+
+
 
             }, function (e) {
                 console.info('处理出错');
@@ -171,7 +187,12 @@ function musicplay(){
 // 选择音乐
 function cMusic(i){
     if(time !==null){
-    source.stop();}
+        source.stop();
+        stopTime=null;
+        source.disconnect(scriptNode);
+        gainNode.disconnect(ctx.destination);
+        ctx.close();
+    }
     musicNumber=i||1;
     switch(i)
     {
@@ -205,8 +226,11 @@ $(document).ready(function(){
                 $('#stopBtn').hide();
                 $('#playBtn').show();
                 source.stop();
-            stopTime = time;
+            stopTime = time-1;
 console.log(stopTime);
+                source.disconnect(scriptNode);
+                gainNode.disconnect(ctx.destination);
+            ctx.close();
             }
         );
      $('#playBtn').click(function(){
@@ -260,7 +284,7 @@ console.log(stopTime);
 
 
 
-// 控制条
+// 控制音量条
 $(function() {
     $(".voiceController").click(function(e) {
 
@@ -282,7 +306,7 @@ $(function() {
 //音量调节
 function changeMUsicVoice(){
     gainNode.gain.value  = voiceRate;
-    console.log(gainNode.gain.value);
+    // console.log(gainNode.gain.value);
 
 }
 
@@ -293,19 +317,55 @@ function nextMusic(){
     // if(stopTime==null){
     var next = musicNumber+1;
     if(next==4){next=1};
+
     cMusic(next);
     // }else{
     //     musicplay();}
 }
 
 
+//显示时间
+function showTime(){
+    var min=0;
+    var sec=0;
+    sec = Math.round(time);
+    exchangetime();
 
-
-
-
-
-setInterval(function(){
-    if(time == source.buffer.duration||time >source.buffer.duration){
-        nextMusic();
+    function exchangetime() {
+        if(sec>=60){
+            min++;
+            sec=sec-60;
+            exchangetime();
+        }
     }
-},1000);
+    $("#time").text(min+':'+sec);
+}
+
+
+
+//进度条
+function processrange(){
+    var inputrange;
+    var currentrange;
+    currentrange =time;
+    inputrange =source.buffer.duration;
+    $("#processController").attr("max",inputrange).attr("value",currentrange);
+
+    if (currentrange==inputrange||currentrange>=inputrange){
+        $("#processController").removeAttr("max").attr("value",0);
+        console.log("ok");
+    }
+
+}
+
+function changeprocess(value) {
+    console.log(value);
+    source.stop();
+
+    source.disconnect(scriptNode);
+    gainNode.disconnect(ctx.destination);
+    ctx.close();
+    stopTime =parseInt(value);
+    console.log(stopTime);
+    musicplay();
+}

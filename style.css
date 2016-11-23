@@ -66,6 +66,11 @@ ul li{
     left:20px;
 }
 
-#voice{
+#voice,#time{
+    display: inline-block;
+}
+
+#processController{
+    width: 500px;
     display: inline-block;
 }
