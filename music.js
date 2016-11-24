@@ -4,9 +4,10 @@
 var a='',b='';
 
 var source = null;
-var currentTime = null;
 var voiceRate=0.1;
 var musicNumber;
+
+var flag =1;
 
 
 
@@ -190,6 +191,7 @@ function cMusic(i){
         source.stop();
         stopTime=null;
         source.disconnect(scriptNode);
+        scriptNode.disconnect(gainNode);
         gainNode.disconnect(ctx.destination);
         ctx.close();
     }
@@ -227,10 +229,11 @@ $(document).ready(function(){
                 $('#playBtn').show();
                 source.stop();
             stopTime = time-1;
-console.log(stopTime);
+            console.log(stopTime);
                 source.disconnect(scriptNode);
                 gainNode.disconnect(ctx.destination);
             ctx.close();
+            time=null;
             }
         );
      $('#playBtn').click(function(){
@@ -315,8 +318,21 @@ function nextMusic(){
     $('#stopBtn').show();
     $('#playBtn').hide();
     // if(stopTime==null){
+
     var next = musicNumber+1;
-    if(next==4){next=1};
+    if (flag==2){
+        next=musicNumber;
+    }else if(flag==3){
+        next =Math.floor(Math.random()*3+1);
+        console.log(next);
+    }
+
+
+
+    if(next>=4){
+        next=1;
+        console.log(next);
+    }
 
     cMusic(next);
     // }else{
@@ -349,23 +365,65 @@ function processrange(){
     var currentrange;
     currentrange =time;
     inputrange =source.buffer.duration;
-    $("#processController").attr("max",inputrange).attr("value",currentrange);
+    // $("#processController").attr("max",inputrange).attr("value",currentrange);
+    var rate = currentrange/inputrange;
 
+    var left=rate*500;
+    $("#process").css("left",left-10+'px');
     if (currentrange==inputrange||currentrange>=inputrange){
-        $("#processController").removeAttr("max").attr("value",0);
+        $("#process").css("left",'0');
         console.log("ok");
     }
 
 }
+//
+// function changeprocess(value) {
+//     console.log(value);
+//     source.stop();
+//
+//     source.disconnect(scriptNode);
+//     gainNode.disconnect(ctx.destination);
+//     ctx.close();
+//     stopTime =parseInt(value);
+//     console.log(stopTime);
+//     musicplay();
+//     processrange();
+// }
 
-function changeprocess(value) {
-    console.log(value);
-    source.stop();
 
-    source.disconnect(scriptNode);
-    gainNode.disconnect(ctx.destination);
-    ctx.close();
-    stopTime =parseInt(value);
-    console.log(stopTime);
-    musicplay();
+
+//三种播放形式
+
+function changeModel(value) {
+    flag = value;
+    console.log(flag);
 }
+
+
+$(function () {
+    $(".processController").click(function(e) {
+
+        var offset = $(this).offset();
+        var relativeX = (e.pageX - offset.left);//获取鼠标相对于组建多位置
+
+
+        var ballX = relativeX;
+        $("#process").css("left",ballX-10+'px');
+
+
+        // alert("X: " + relativeX + "  Y: " + relativeY+'rate:'+voiceRate);
+        source.stop();
+
+        source.disconnect(scriptNode);
+        gainNode.disconnect(ctx.destination);
+        ctx.close();
+        stopTime =parseInt(source.buffer.duration)*ballX/500;
+        console.log(stopTime);
+        musicplay();
+    });
+});
+
+
+
+
+

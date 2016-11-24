@@ -56,7 +56,7 @@ ul li{
     height: 5px;
     background-color: grey;
 }
-#ball{
+#ball,#process{
     position: absolute;
     z-index: 1;
     height: 20px;
@@ -73,4 +73,25 @@ ul li{
 #processController{
     width: 500px;
     display: inline-block;
+}
+
+
+
+.bar2{
+    display: inline-block;
+    z-index: -1111;
+    position: absolute;
+    top:7.5px;
+    width: 500px;
+    height: 5px;
+    background-color: grey;
+}
+
+
+.processController{
+    display: inline-block;
+    position: relative;
+    width: 500px;
+    height: 20px;
+    overflow: hidden;
 }
