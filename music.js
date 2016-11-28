@@ -69,8 +69,10 @@ function musicplay(){
     if (!window.AudioContext) {
         alert('您的浏览器不支持AudioContext');
     } else {
-
+        loadlrc();
          ctx = new AudioContext();
+        // var getlrc =loadlrc();
+        // var lrcobj= getlrc();
 
         //使用Ajax获取音频文件
         var request = new XMLHttpRequest();
@@ -99,9 +101,9 @@ function musicplay(){
 
 
                             time =stopTime +audioProcessingEvent.playbackTime;
+                    showlrc();
 
-
-
+                        // console.log(lrcobj[Math.round(time)]);
 
                         // console.log(audioProcessingEvent.playbackTime);
 
@@ -182,6 +184,51 @@ function musicplay(){
 
 
 }
+
+
+//读取音乐歌词文件
+function loadlrc(){
+    $.ajax({
+        url:'music/'+a+'.lrc',
+        headers:{
+            contentType:"application/x-www-form-urlencoded"
+        },
+        success:function(lrc){
+            var lyric = parseLyric(lrc);
+            if(success)success(lyric);
+        },
+        error:function(e){
+            if(error)error(e);
+        }
+    });
+}
+
+
+var lrcObj = {};
+function parseLyric(lrc) {
+    var lyrics = lrc.split("\n");
+
+    for(var i=0;i<lyrics.length;i++){
+        var lyric = decodeURIComponent(lyrics[i]);
+        var timeReg = /\[\d*:\d*((\.|\:)\d*)*\]/g;
+        var timeRegExpArr = lyric.match(timeReg);
+        if(!timeRegExpArr)continue;
+        var clause = lyric.replace(timeReg,'');
+
+        for(var k = 0,h = timeRegExpArr.length;k < h;k++) {
+            var t = timeRegExpArr[k];
+            var min = Number(String(t.match(/\[\d*/i)).slice(1)),
+                sec = Number(String(t.match(/\:\d*/i)).slice(1));
+            var ltime = min * 60 + sec;
+            lrcObj[ltime] = clause;
+        }
+    }
+    // return function getlrcobj() {
+    //     return lrcObj;
+    // }
+
+}
+
 
 
 
@@ -376,19 +423,6 @@ function processrange(){
     }
 
 }
-//
-// function changeprocess(value) {
-//     console.log(value);
-//     source.stop();
-//
-//     source.disconnect(scriptNode);
-//     gainNode.disconnect(ctx.destination);
-//     ctx.close();
-//     stopTime =parseInt(value);
-//     console.log(stopTime);
-//     musicplay();
-//     processrange();
-// }
 
 
 
@@ -423,6 +457,16 @@ $(function () {
     });
 });
 
+
+
+function showlrc() {
+    // var getlrc =parseLyric;
+    // var lrcobj= getlrc();
+
+    var TheTime = Math.round(time);
+    console.log(lrcObj[TheTime]);
+
+}
 
 
 
