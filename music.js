@@ -44,6 +44,7 @@ function music(songname,singer,time,i){
         a =songname;
         b =singer;
         musicplay();
+        loadlrc();
     }
 
 }
@@ -69,7 +70,7 @@ function musicplay(){
     if (!window.AudioContext) {
         alert('您的浏览器不支持AudioContext');
     } else {
-        loadlrc();
+
          ctx = new AudioContext();
         // var getlrc =loadlrc();
         // var lrcobj= getlrc();
@@ -203,10 +204,10 @@ function loadlrc(){
     });
 }
 
-
-var lrcObj = {};
+var obj;
 function parseLyric(lrc) {
     var lyrics = lrc.split("\n");
+    var lrcObj = {};
 
     for(var i=0;i<lyrics.length;i++){
         var lyric = decodeURIComponent(lyrics[i]);
@@ -224,7 +225,7 @@ function parseLyric(lrc) {
         }
     }
     // return function getlrcobj() {
-    //     return lrcObj;
+        return obj = lrcObj;
     // }
 
 }
@@ -463,8 +464,14 @@ function showlrc() {
     // var getlrc =parseLyric;
     // var lrcobj= getlrc();
 
+
     var TheTime = Math.round(time);
-    console.log(lrcObj[TheTime]);
+    // console.log(obj[TheTime]);
+    if (obj[TheTime]!==undefined){
+        console.log(obj[TheTime]);
+        $(".lyrics").text(obj[TheTime]);
+    }
+
 
 }
 
